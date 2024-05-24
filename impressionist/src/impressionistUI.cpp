@@ -389,6 +389,9 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE + 1] = {
     {"ScatteredPoints", FL_ALT + 'q',
      (Fl_Callback *)ImpressionistUI::cb_brushChoice,
      (void *)BRUSH_SCATTERED_POINTS},
+    {"ScatteredCircles", FL_ALT + 'o',
+     (Fl_Callback *)ImpressionistUI::cb_brushChoice,
+     (void *)BRUSH_SCATTERED_CIRCLES},
     // �u���V�ǉ�
     {0}};
 
