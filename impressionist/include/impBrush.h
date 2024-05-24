@@ -7,6 +7,7 @@
 // The header file of virtual brush. All the other brushes inherit from it.
 //
 
+#include "FL/Fl_File_Icon.H"
 #include <stdlib.h>
 
 // Each brush type has an associated constant.
@@ -16,6 +17,7 @@ enum {
   BRUSH_TRIANGLES,
   BRUSH_CIRCLES,
   BRUSH_LINES,
+  BRUSH_SCATTERED_POINTS,
   NUM_BRUSH_TYPE // Make sure this stays at the end!
 };
 

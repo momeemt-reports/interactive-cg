@@ -16,9 +16,10 @@
 // Include individual brush headers here.
 // ブラシ追加
 #include "circleBrush.h"
-#include "pointBrush.h"
-#include "triangleBrush.h"
 #include "lineBrush.h"
+#include "pointBrush.h"
+#include "scatteredPointBrush.h"
+#include "triangleBrush.h"
 
 #define DESTROY(p)                                                             \
   {                                                                            \
@@ -45,6 +46,8 @@ ImpressionistDoc::ImpressionistDoc() {
   ImpBrush::c_pBrushes[BRUSH_TRIANGLES] = new TriangleBrush(this, "Triangles");
   ImpBrush::c_pBrushes[BRUSH_CIRCLES] = new CircleBrush(this, "Circles");
   ImpBrush::c_pBrushes[BRUSH_LINES] = new LineBrush(this, "Lines");
+  ImpBrush::c_pBrushes[BRUSH_SCATTERED_POINTS] =
+      new ScatteredPointBrush(this, "ScatteredPoints");
   // Note: You should implement these 5 brushes.  They are set the same
   // (PointBrush) for now
 
@@ -52,9 +55,7 @@ ImpressionistDoc::ImpressionistDoc() {
   m_pCurrentBrush = ImpBrush::c_pBrushes[0];
 }
 
-int ImpressionistDoc::getAngle () {
-  return m_pUI->getAngle();
-}
+int ImpressionistDoc::getAngle() { return m_pUI->getAngle(); }
 
 //---------------------------------------------------------
 // Set the current UI
