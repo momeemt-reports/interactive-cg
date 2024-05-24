@@ -1,0 +1,10 @@
+*.o
+.envrc
+.direnv
+build/
+bin/
+Thumbs.db
+
+# fltk
+external/
+
