@@ -42,6 +42,7 @@ add_executable(impressionist
   src/pointBrush.cpp
   src/triangleBrush.cpp
   src/circleBrush.cpp
+  src/lineBrush.cpp
 )
 target_include_directories(impressionist PRIVATE include/)
 target_link_libraries(impressionist PRIVATE fltk_all)
