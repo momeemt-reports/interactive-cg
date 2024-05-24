@@ -10,6 +10,7 @@
 
 #include <math.h>
 
+#include "impBrush.h"
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
 
@@ -237,7 +238,7 @@ void ImpressionistUI::cb_about(Fl_Menu_ *o, void *v) {
 }
 
 //------- UI should keep track of the current for all the controls for answering
-//the query from Doc ---------
+// the query from Doc ---------
 //-------------------------------------------------------------
 // Sets the type of brush to use to the one chosen in the brush
 // choice.
@@ -364,6 +365,8 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE + 1] = {
      (void *)BRUSH_POINTS},
     {"Triangles", FL_ALT + 't', (Fl_Callback *)ImpressionistUI::cb_brushChoice,
      (void *)BRUSH_TRIANGLES},
+    {"Circles", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_brushChoice,
+     (void *)BRUSH_CIRCLES},
     // �u���V�ǉ�
     {0}};
 

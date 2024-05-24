@@ -15,6 +15,7 @@
 
 // Include individual brush headers here.
 // ブラシ追加
+#include "circleBrush.h"
 #include "pointBrush.h"
 #include "triangleBrush.h"
 
@@ -41,6 +42,7 @@ ImpressionistDoc::ImpressionistDoc() {
 
   ImpBrush::c_pBrushes[BRUSH_POINTS] = new PointBrush(this, "Points");
   ImpBrush::c_pBrushes[BRUSH_TRIANGLES] = new TriangleBrush(this, "Triangles");
+  ImpBrush::c_pBrushes[BRUSH_CIRCLES] = new CircleBrush(this, "Circles");
   // Note: You should implement these 5 brushes.  They are set the same
   // (PointBrush) for now
 
