@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.6.3)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(Impressionist)
 
@@ -39,6 +40,7 @@ add_executable(impressionist
   src/originalView.cpp
   src/paintView.cpp
   src/pointBrush.cpp
+  src/triangleBrush.cpp
 )
 target_include_directories(impressionist PRIVATE include/)
 target_link_libraries(impressionist PRIVATE fltk_all)

@@ -4,6 +4,7 @@
 build/
 bin/
 Thumbs.db
+.cache/
 
 # fltk
 external/

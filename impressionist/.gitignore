@@ -1,2 +1,3 @@
 build*
 external/fltk
+compile_commands.json
