@@ -208,7 +208,41 @@ void ImpressionistDoc::applyFilter(const unsigned char *sourceBuffer,
                                    double offset) {
   // This needs to be implemented for image filtering to work.
   double bufR, bufB, bufG;
-  int i, j, k, l;
+
+  for (int i = 0; i < srcBufferWidth; i++) {
+    for (int j = 0; j < srcBufferHeight; j++) {
+      destBuffer[3 * (i + srcBufferWidth * j)] = 0;
+      destBuffer[3 * (i + srcBufferWidth * j) + 1] = 0;
+      destBuffer[3 * (i + srcBufferWidth * j) + 2] = 0;
+    }
+  }
+
+  for (int i = 2; i < srcBufferWidth - 2; i++) {
+    for (int j = 2; j < srcBufferHeight - 2; j++) {
+      bufR = bufG = bufG = offset;
+      for (int k = 0; k < knlWidth; k++) {
+        for (int l = 0; l < knlHeight; l++) {
+          bufR += filterKernel[k + knlWidth * l] *
+                  sourceBuffer[3 * (i + k - 2 + srcBufferWidth * (j + l - 2))] /
+                  divisor;
+          bufG +=
+              filterKernel[k + knlWidth * l] *
+              sourceBuffer[3 * (i + k - 2 + srcBufferWidth * (j + l - 2)) + 1] /
+              divisor;
+          bufB +=
+              filterKernel[k + knlWidth * l] *
+              sourceBuffer[3 * (i + k - 2 + srcBufferWidth * (j + l - 2)) + 2] /
+              divisor;
+        }
+      }
+      bufR = std::max(0.0, std::min(255.0, bufR));
+      bufG = std::max(0.0, std::min(255.0, bufG));
+      bufB = std::max(0.0, std::min(255.0, bufB));
+      destBuffer[3 * (i + srcBufferWidth * j)] = (unsigned char)bufR;
+      destBuffer[3 * (i + srcBufferWidth * j) + 1] = (unsigned char)bufG;
+      destBuffer[3 * (i + srcBufferWidth * j) + 2] = (unsigned char)bufB;
+    }
+  }
 }
 
 //------------------------------------------------------------------
