@@ -32,6 +32,7 @@ public:
   void setBrushType(int type); // called by the UI to set the brushType
   int getSize();               // get the UI size
   int getAngle();
+  int getScatteringNum();
 
   // get the UI angle
   void setSize(int size); // set the UI size

@@ -46,13 +46,14 @@ void ScatteredCircleBrush::BrushMove(const Point source, const Point target) {
   }
 
   int size = pDoc->getSize();
+  int scatteringNum = pDoc->getScatteringNum();
   int div = 12;
   float radius = size / 2.0;
   float Ax, Ay;
 
   // SetColorAlpha( source, alpha );
   SetColor(source);
-  for (int n = 0; n < 10; n++) {
+  for (int n = 0; n < scatteringNum; n++) {
     glBegin(GL_POLYGON);
     float tAx = target.x + rand() % (size * 5);
     float tAy = target.y + rand() % (size * 5);

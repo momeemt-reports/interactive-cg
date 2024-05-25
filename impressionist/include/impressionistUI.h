@@ -52,6 +52,10 @@ public:
   int getAngle();
   void setAngle(int angle);
 
+  Fl_Slider *m_BrushScatteringNumSlider;
+  int getScatteringNum();
+  void setScatteringNum(int scatteringNum);
+
   // 実習
   // 角度とα値のスライダー
 
@@ -87,6 +91,9 @@ private:
 
   int m_nAngle;
   static void cb_angleSlides(Fl_Widget *o, void *v);
+
+  int m_nScattering;
+  static void cb_scatteringNumSlides(Fl_Widget *o, void *v);
 
   // All attributes here
   int m_nSize;

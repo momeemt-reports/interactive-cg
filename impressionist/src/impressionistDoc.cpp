@@ -60,6 +60,8 @@ ImpressionistDoc::ImpressionistDoc() {
 
 int ImpressionistDoc::getAngle() { return m_pUI->getAngle(); }
 
+int ImpressionistDoc::getScatteringNum() { return m_pUI->getScatteringNum(); }
+
 //---------------------------------------------------------
 // Set the current UI
 //---------------------------------------------------------

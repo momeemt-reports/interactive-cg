@@ -43,13 +43,15 @@ void ScatteredPointBrush::BrushMove(const Point source, const Point target) {
   }
 
   int size = pDoc->getSize();
+  int scatteringNum = pDoc->getScatteringNum();
+
   glPointSize(1.0);
   int Ax, Ay;
 
   // SetColorAlpha( source, alpha );
   SetColor(source);
   glBegin(GL_POINTS);
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < scatteringNum; i++) {
     Ax = target.x - size / 2 + rand() % size;
     Ay = target.y - size / 2 + rand() % size;
     glVertex2i(Ax, Ay);

@@ -338,6 +338,20 @@ void ImpressionistUI::setAngle(int angle) {
   }
 }
 
+void ImpressionistUI::cb_scatteringNumSlides(Fl_Widget *o, void *v) {
+  ((ImpressionistUI *)(o->user_data()))->m_nScattering =
+      int(((Fl_Slider *)o)->value());
+}
+
+int ImpressionistUI::getScatteringNum() { return m_nScattering; }
+
+void ImpressionistUI::setScatteringNum(int scatteringNum) {
+  m_nScattering = scatteringNum;
+  if (scatteringNum >= 0 && scatteringNum <= 100) {
+    m_BrushScatteringNumSlider->value(m_nScattering);
+  }
+}
+
 //------------------------------------------------
 // Return the alpha value
 //------------------------------------------------
@@ -481,6 +495,20 @@ ImpressionistUI::ImpressionistUI() {
   m_BrushAngleSlider->value(m_nAngle);
   m_BrushAngleSlider->align(FL_ALIGN_RIGHT);
   m_BrushAngleSlider->callback(cb_angleSlides);
+
+  m_nScattering = 10;
+  m_BrushScatteringNumSlider =
+      new Fl_Value_Slider(10, 160, 300, 20, "ScatteringNum");
+  m_BrushScatteringNumSlider->user_data((void *)(this));
+  m_BrushScatteringNumSlider->type(FL_HOR_NICE_SLIDER);
+  m_BrushScatteringNumSlider->labelfont(FL_COURIER);
+  m_BrushScatteringNumSlider->labelsize(12);
+  m_BrushScatteringNumSlider->minimum(0);
+  m_BrushScatteringNumSlider->maximum(100);
+  m_BrushScatteringNumSlider->step(1);
+  m_BrushScatteringNumSlider->value(m_nScattering);
+  m_BrushScatteringNumSlider->align(FL_ALIGN_RIGHT);
+  m_BrushScatteringNumSlider->callback(cb_scatteringNumSlides);
 
   m_brushDialog->end();
 }
