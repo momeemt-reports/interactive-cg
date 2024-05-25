@@ -21,6 +21,8 @@
 #include "scatteredCircleBrush.h"
 #include "scatteredPointBrush.h"
 #include "triangleBrush.h"
+#include "vividPointBrush.h"
+#include "vividScatteredLineBrush.h"
 
 #define DESTROY(p)                                                             \
   {                                                                            \
@@ -51,6 +53,10 @@ ImpressionistDoc::ImpressionistDoc() {
       new ScatteredPointBrush(this, "ScatteredPoints");
   ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES] =
       new ScatteredCircleBrush(this, "ScatteredCircles");
+  ImpBrush::c_pBrushes[BRUSH_VIVID_POINTS] =
+      new VividPointBrush(this, "VividPoints");
+  ImpBrush::c_pBrushes[BRUSH_VIVID_SCATTERED_LINES] =
+      new VividScatteredLineBrush(this, "VividScatteredLines");
   // Note: You should implement these 5 brushes.  They are set the same
   // (PointBrush) for now
 

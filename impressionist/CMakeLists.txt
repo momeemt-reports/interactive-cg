@@ -45,6 +45,8 @@ add_executable(impressionist
   src/lineBrush.cpp
   src/scatteredPointBrush.cpp
   src/scatteredCircleBrush.cpp
+  src/vividPointBrush.cpp
+  src/vividScatteredLineBrush.cpp
 )
 target_include_directories(impressionist PRIVATE include/)
 target_link_libraries(impressionist PRIVATE fltk_all)
