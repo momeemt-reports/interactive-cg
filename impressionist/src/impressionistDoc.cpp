@@ -219,7 +219,7 @@ void ImpressionistDoc::applyFilter(const unsigned char *sourceBuffer,
 
   for (int i = 2; i < srcBufferWidth - 2; i++) {
     for (int j = 2; j < srcBufferHeight - 2; j++) {
-      bufR = bufG = bufG = offset;
+      bufR = bufG = bufB = offset;
       for (int k = 0; k < knlWidth; k++) {
         for (int l = 0; l < knlHeight; l++) {
           bufR += filterKernel[k + knlWidth * l] *
