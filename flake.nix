@@ -2,6 +2,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/23.11";
     flake-utils.url = "github:numtide/flake-utils";
+    flake-compat = {
+      url = "github:edolstra/flake-compat";
+      flake = false;
+    };
   };
   outputs = {
     nixpkgs,
@@ -28,6 +32,11 @@
               python311Packages.compiledb
               gnumake
               cmake
+              typst
+              typstfmt
+              typst-lsp
+              typst-live
+              typst-preview
             ]
             ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs.darwin.apple_sdk.frameworks; [
               ApplicationServices
