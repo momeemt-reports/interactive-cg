@@ -42,6 +42,7 @@
               xorg.libXrender
               xorg.libXt
               libpng
+              libjpeg
             ]
             ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs.darwin.apple_sdk.frameworks; [
               ApplicationServices
@@ -54,8 +55,8 @@
               UniformTypeIdentifiers
             ]);
           FLTK_INCLUDES_DIR = "${pkgs.fltk}/include";
-          NIX_CFLAGS_COMPILE = "-F${pkgs.darwin.apple_sdk.frameworks.CoreFoundation}/Library/Frameworks -F${pkgs.darwin.apple_sdk.frameworks.CoreGraphics}/Library/Frameworks -I${pkgs.lib.getDev pkgs.clangStdenv.cc.libc}/include -I${pkgs.llvmPackages.clang-unwrapped.lib}/lib/clang/16/include -I${libcIncludeDir} -I${pkgs.llvmPackages.libcxx.dev}/include/c++/v1 -I${pkgs.llvmPackages.libcxxabi.dev}/include/c++/v1 -I${pkgs.libpng.dev}/include -I${pkgs.xorg.libX11.dev}/include";
-          NIX_LDFLAGS = "-F${pkgs.darwin.apple_sdk.frameworks.CoreFoundation}/Library/Frameworks -F${pkgs.darwin.apple_sdk.frameworks.CoreGraphics}/Library/Frameworks -framework CoreFoundation -framework CoreGraphics -framework ApplicationServices -framework Carbon -framework Cocoa -framework OpenGL -framework GLUT -framework UniformTypeIdentifiers -L${pkgs.libpng}/lib -lpng -L${pkgs.xorg.libX11}/lib -lX11";
+          NIX_CFLAGS_COMPILE = "-F${pkgs.darwin.apple_sdk.frameworks.CoreFoundation}/Library/Frameworks -F${pkgs.darwin.apple_sdk.frameworks.CoreGraphics}/Library/Frameworks -I${pkgs.lib.getDev pkgs.clangStdenv.cc.libc}/include -I${pkgs.llvmPackages.clang-unwrapped.lib}/lib/clang/16/include -I${libcIncludeDir} -I${pkgs.llvmPackages.libcxx.dev}/include/c++/v1 -I${pkgs.llvmPackages.libcxxabi.dev}/include/c++/v1 -I${pkgs.libpng.dev}/include -I${pkgs.xorg.libX11.dev}/include -I${pkgs.libjpeg.dev}/include";
+          NIX_LDFLAGS = "-F${pkgs.darwin.apple_sdk.frameworks.CoreFoundation}/Library/Frameworks -F${pkgs.darwin.apple_sdk.frameworks.CoreGraphics}/Library/Frameworks -framework CoreFoundation -framework CoreGraphics -framework ApplicationServices -framework Carbon -framework Cocoa -framework OpenGL -framework GLUT -framework UniformTypeIdentifiers -L${pkgs.libpng}/lib -lpng -L${pkgs.xorg.libX11}/lib -lX11 -L${pkgs.libjpeg}/lib -ljpeg";
         };
       }
     );
