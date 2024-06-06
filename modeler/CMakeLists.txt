@@ -16,7 +16,7 @@ execute_process(
 )
 
 execute_process(
-  COMMAND ${GIT_EXECUTABLE} checkout master
+  COMMAND ${GIT_EXECUTABLE} checkout release-1.3.5
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/external/fltk
 )
 
