@@ -18,7 +18,10 @@ enum CONTROLLERS {
 
   FRAME_CONTROLS, // フレームコントローラ（変更しないこと)
   // 〜〜〜列挙子を追加〜〜〜
-  X_POSITION,
+  ARM1_ANGLE,
+  ARM2_ANGLE,
+  ARM3_ANGLE,
+  ARM4_ANGLE,
   NUM_CONTROLS, // コントローラ数（必ず末尾に追加）
 };
 
@@ -30,7 +33,14 @@ void SetController(ModelerControl *controls) {
       ModelerControl("Frame Number", 0, (float)max_frame_count, 1, 0);
 
   // 〜〜〜スライダを追加〜〜〜
-  controls[X_POSITION] = ModelerControl("X-Position", -3.0f, 3.0f, 0.1f, 0.0f);
+  controls[ARM1_ANGLE] =
+      ModelerControl("Arm1-Angle", -60.0f, 60.0f, 1.0f, 30.0f);
+  controls[ARM2_ANGLE] =
+      ModelerControl("Arm2-Angle", 20.0f, 160.0f, 1.0f, 90.0f);
+  controls[ARM3_ANGLE] =
+      ModelerControl("Arm3-Angle", -60.0f, 60.0f, 1.0f, -30.0f);
+  controls[ARM4_ANGLE] =
+      ModelerControl("Arm4-Angle", -60.0f, 60.0f, 1.0f, 30.0f);
 }
 
 // __CONTROLLER_H__

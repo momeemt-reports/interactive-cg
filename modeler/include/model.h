@@ -8,11 +8,13 @@
 #define __MODEL_H__
 
 // ヘッダファイルのインクルード
+#include "OpenGL/OpenGL.h"
 #include "animator.h"
+#include "controller.h"
 #include "modelerdraw.h"
 
 // フレーム番号の最大値
-int max_frame_count = 500;
+int max_frame_count = 450;
 
 // Modelクラスの定義（ModelerViewクラスを継承）
 class Model : public ModelerView {
@@ -29,6 +31,7 @@ private:
   //-------------------------------------------------------------------------
 
   // 〜〜〜変数を追加〜〜〜
+  double r, posX, posY;
 
   // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
 
@@ -48,6 +51,9 @@ public:
     //---------------------------------------------------------------------
 
     // 〜〜〜変数を初期化〜〜〜
+    r = 4.0f;
+    posX = r;
+    posY = 0.0;
 
     // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
   }
@@ -63,6 +69,9 @@ public:
     //-----------------------------------------------------------------
 
     // 〜〜〜プログラムを記述〜〜〜
+    double theta = frame_count * M_PI / 50;
+    posX = r * cos(theta);
+    posY = r * sin(theta);
 
     //-----------------------------------------------------------------
   }
@@ -74,11 +83,24 @@ public:
     //-----------------------------------------------------------------
 
     // 〜〜〜プログラムを記述〜〜〜
+    double theta = frame_count * M_PI / 50;
+    posX = r * cos(theta);
+    posY = r * sin(theta);
 
     //-----------------------------------------------------------------
   }
 
-  // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
+  // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜A
+
+  void drawEye() {
+    setDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+    drawSphere(0.25);
+    glPushMatrix();
+    setDiffuseColor(0.2f, 0.1f, 0.0f, 1.0f);
+    glTranslated(0.0, 0.2, 0.0);
+    drawSphere(0.1);
+    glPopMatrix();
+  }
 
   // 描画の前処理
   void BeginPaint() {
@@ -124,20 +146,48 @@ public:
     //---------------------------------------------------------------------
     // オブジェクトを描画
     //---------------------------------------------------------------------
-    setAmbientColor(0.5f, 0.5f, 0.5f);
-    setSpecularColor(1.0f, 1.0f, 1.0f);
-    setShininess(20.0f);
+    /* setAmbientColor(0.5f, 0.5f, 0.5f); */
+    /* setSpecularColor(1.0f, 1.0f, 1.0f); */
+    /* setShininess(20.0f); */
 
-    glPushMatrix();
-    setDiffuseColor(0.5f, 0.3f, 0.0f, 1.0f);
-    glTranslated(-5, -5, -5);
-    drawBox(10, 0.2, 10);
-    glPopMatrix();
+    /* glPushMatrix(); */
+    /* setDiffuseColor(0.5f, 0.3f, 0.0f, 1.0f); */
+    /* drawBox(4, 0.3, 4); */
+    /* glTranslated(2, 0, 2); */
 
-    glTranslated(GetSliderValue(X_POSITION), 0.0f, 0.0f);
-    setDiffuseColor(0.0f, 0.0f, 0.5f, 1.0f);
-    drawSphere(2.0f);
+    /* glRotated(GetSliderValue(ARM1_ANGLE), 1, 0, 0); */
+    /* setDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f); */
+    /* drawBox(0.2, 4, 0.2); */
+    /* glTranslated(0, 4, 0); */
 
+    /* glRotated(GetSliderValue(ARM2_ANGLE), 1, 0, 0); */
+    /* setDiffuseColor(1.0f, 1.0f, 0.0f, 1.0f); */
+    /* drawBox(0.2, 2, 0.2); */
+    /* glTranslated(-0.5, 2, 0); */
+
+    /* glPushMatrix(); */
+    /* setDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f); */
+    /* glRotated(GetSliderValue(ARM3_ANGLE), 1, 0, 0); */
+    /* drawBox(1, 1, 0.2); */
+
+    /* glPopMatrix(); */
+    /* setDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f); */
+    /* glRotated(GetSliderValue(ARM4_ANGLE), 1, 0, 0); */
+    /* drawBox(1, 1, 0.2); */
+
+    /* glRotated(-60.0f, 1, 0, 0); */
+    /* glTranslated(0.0, 0.0, -0.5f); */
+    /* glPushMatrix(); */
+    /* glTranslated(0.2f, 0.0, 0.0); */
+    /* drawEye(); */
+    /* glPopMatrix(); */
+
+    /* glTranslated(0.8f, 0.0, 0.0); */
+    /* drawEye(); */
+    /* glPopMatrix(); */
+
+    glTranslated(posX, posY, 0);
+    drawSphere(0.5);
     //---------------------------------------------------------------------
 
     // 描画終了
