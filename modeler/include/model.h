@@ -31,7 +31,13 @@ private:
   //-------------------------------------------------------------------------
 
   // 〜〜〜変数を追加〜〜〜
-  double r, posX, posY;
+  double dt;
+  double G;
+  double r;
+  double angle_prev;
+  double angle_curr;
+  double angle_next;
+  Vec3d pos;
 
   // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
 
@@ -51,9 +57,11 @@ public:
     //---------------------------------------------------------------------
 
     // 〜〜〜変数を初期化〜〜〜
-    r = 4.0f;
-    posX = r;
-    posY = 0.0;
+    dt = 0.06;
+    G = 9.8;
+    r = 6.0;
+    angle_prev = angle_curr = angle_next = M_PI / 4.0;
+    pos = Vec3d(r * sin(angle_next), -r * cos(angle_next), 0);
 
     // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
   }
@@ -69,10 +77,12 @@ public:
     //-----------------------------------------------------------------
 
     // 〜〜〜プログラムを記述〜〜〜
-    double theta = frame_count * M_PI / 50;
-    posX = r * cos(theta);
-    posY = r * sin(theta);
-
+    double k = sqrt(G / r);
+    angle_next =
+        -angle_prev + 2 * angle_curr - k * k * dt * dt * sin(angle_curr);
+    angle_prev = angle_curr;
+    angle_curr = angle_next;
+    pos = Vec3d(r * sin(angle_next), -r * cos(angle_next), 0);
     //-----------------------------------------------------------------
   }
 
@@ -83,9 +93,6 @@ public:
     //-----------------------------------------------------------------
 
     // 〜〜〜プログラムを記述〜〜〜
-    double theta = frame_count * M_PI / 50;
-    posX = r * cos(theta);
-    posY = r * sin(theta);
 
     //-----------------------------------------------------------------
   }
@@ -186,8 +193,14 @@ public:
     /* drawEye(); */
     /* glPopMatrix(); */
 
-    glTranslated(posX, posY, 0);
+    glRotated(30.0f, 0.0f, 0.0f, 0.0f);
+    glBegin(GL_LINES);
+    glVertex3d(0, 0, 0);
+    glVertex3d(pos[0], pos[1], pos[2]);
+    glEnd();
+    glTranslated(pos[0], pos[1], pos[2]);
     drawSphere(0.5);
+
     //---------------------------------------------------------------------
 
     // 描画終了
