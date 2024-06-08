@@ -18,10 +18,15 @@ enum CONTROLLERS {
 
   FRAME_CONTROLS, // フレームコントローラ（変更しないこと)
   // 〜〜〜列挙子を追加〜〜〜
+  MARIO_X,
+  MARIO_Y,
+  MARIO_Z,
+  BODY_ANGLE,
   ARM1_ANGLE,
   ARM2_ANGLE,
-  ARM3_ANGLE,
-  ARM4_ANGLE,
+  FOOT1_ANGLE,
+  FOOT2_ANGLE,
+  STAR_ANGLE,
   NUM_CONTROLS, // コントローラ数（必ず末尾に追加）
 };
 
@@ -34,13 +39,19 @@ void SetController(ModelerControl *controls) {
 
   // 〜〜〜スライダを追加〜〜〜
   controls[ARM1_ANGLE] =
-      ModelerControl("Arm1-Angle", -60.0f, 60.0f, 1.0f, 30.0f);
+      ModelerControl("Arm1-Angle", -60.0f, 60.0f, 1.0f, 0.0f);
   controls[ARM2_ANGLE] =
-      ModelerControl("Arm2-Angle", 20.0f, 160.0f, 1.0f, 90.0f);
-  controls[ARM3_ANGLE] =
-      ModelerControl("Arm3-Angle", -60.0f, 60.0f, 1.0f, -30.0f);
-  controls[ARM4_ANGLE] =
-      ModelerControl("Arm4-Angle", -60.0f, 60.0f, 1.0f, 30.0f);
+      ModelerControl("Arm2-Angle", -60.0f, 60.0f, 1.0f, 0.0f);
+  controls[FOOT1_ANGLE] =
+      ModelerControl("Foot1-Angle", -60.0f, 60.0f, 1.0f, 0.0f);
+  controls[FOOT2_ANGLE] =
+      ModelerControl("Foot2-Angle", -60.0f, 60.0f, 1.0f, 0.0f);
+  controls[BODY_ANGLE] =
+      ModelerControl("Body-Angle", -60.0f, 60.0f, 1.0f, 0.0f);
+  controls[STAR_ANGLE] = ModelerControl("Star-Angle", 0.0f, 360.0f, 1.0f, 0.0f);
+  controls[MARIO_X] = ModelerControl("Mario-X", -10.0f, 10.0f, 1.0f, 0.0f);
+  controls[MARIO_Y] = ModelerControl("Mario-Y", 0.0f, 10.0f, 1.0f, 3.0f);
+  controls[MARIO_Z] = ModelerControl("Mario-Z", -10.0f, 10.0f, 1.0f, 0.0f);
 }
 
 // __CONTROLLER_H__

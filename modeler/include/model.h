@@ -10,6 +10,7 @@
 // ヘッダファイルのインクルード
 #include "OpenGL/OpenGL.h"
 #include "animator.h"
+#include "camera.h"
 #include "controller.h"
 #include "modelerdraw.h"
 
@@ -31,13 +32,6 @@ private:
   //-------------------------------------------------------------------------
 
   // 〜〜〜変数を追加〜〜〜
-  double dt;
-  double G;
-  double r;
-  double angle_prev;
-  double angle_curr;
-  double angle_next;
-  Vec3d pos;
 
   // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
 
@@ -57,11 +51,7 @@ public:
     //---------------------------------------------------------------------
 
     // 〜〜〜変数を初期化〜〜〜
-    dt = 0.06;
-    G = 9.8;
-    r = 6.0;
-    angle_prev = angle_curr = angle_next = M_PI / 4.0;
-    pos = Vec3d(r * sin(angle_next), -r * cos(angle_next), 0);
+    SetSliderValue(DOLLY, -180);
 
     // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
   }
@@ -70,42 +60,202 @@ public:
   // 第3週課題
   //---------------------------------------------------------------------
 
-  // 自動アニメーションの設定
   void SetAutomaticAnimation() {
-    //-----------------------------------------------------------------
-    // アニメーション
-    //-----------------------------------------------------------------
+    double t = frame_count / 30.0;
+    double run_distance = t * 0.8;
 
-    // 〜〜〜プログラムを記述〜〜〜
-    double k = sqrt(G / r);
-    angle_next =
-        -angle_prev + 2 * angle_curr - k * k * dt * dt * sin(angle_curr);
-    angle_prev = angle_curr;
-    angle_curr = angle_next;
-    pos = Vec3d(r * sin(angle_next), -r * cos(angle_next), 0);
-    //-----------------------------------------------------------------
+    const double PI = 3.14159;
+
+    double arm_angle = 45.0 * sin(t * 4.0 * PI);
+    double foot_angle = 30.0 * sin(t * 4.0 * PI);
+    double body_angle = 10.0 * sin(t * 4.0 * PI);
+    double star_angle = 360.0 * sin(t * 0.2 * PI);
+
+    SetSliderValue(MARIO_X, run_distance);
+    SetSliderValue(ARM1_ANGLE, arm_angle);
+    SetSliderValue(ARM2_ANGLE, -arm_angle);
+    SetSliderValue(FOOT1_ANGLE, foot_angle);
+    SetSliderValue(FOOT2_ANGLE, -foot_angle);
+    SetSliderValue(BODY_ANGLE, body_angle);
+    SetSliderValue(STAR_ANGLE, star_angle);
+
+    if (frame_count >= 150) {
+      double jump_height = 1.0 * sin((t - 5.0) * 3.14159);
+      SetSliderValue(MARIO_Y, 2.5 + jump_height);
+    } else {
+      SetSliderValue(MARIO_Y, 2.5);
+    }
   }
 
   // 手動アニメーションの設定
-  void SetManualAnimation() {
-    //-----------------------------------------------------------------
-    // アニメーション
-    //-----------------------------------------------------------------
+  void SetManualAnimation() { SetAutomaticAnimation(); }
 
-    // 〜〜〜プログラムを記述〜〜〜
+  // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
 
-    //-----------------------------------------------------------------
+  void setDiffuseColorRGB(int r, int g, int b) {
+    setDiffuseColor((double)r / 255.0, (double)g / 255.0, (double)b / 255.0,
+                    1.0f);
   }
 
-  // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜A
+  void drawStar(float centerX, float centerY, float radius) {
+    const int numVertices = 10;
+    const float angleStep = M_PI / 5;
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(centerX, centerY);
+    for (int i = 0; i <= numVertices; ++i) {
+      float angle = i * angleStep;
+      float r = (i % 2 == 0) ? radius : radius / 2;
+      float x = centerX + r * cos(angle);
+      float y = centerY + r * sin(angle);
+      glVertex2f(x, y);
+    }
+    glEnd();
+  }
 
-  void drawEye() {
-    setDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-    drawSphere(0.25);
+  void drawCap() {
+    setDiffuseColorRGB(238, 23, 17);
+    drawBox(2.5f, 0.5f, 0.5f);
     glPushMatrix();
-    setDiffuseColor(0.2f, 0.1f, 0.0f, 1.0f);
-    glTranslated(0.0, 0.2, 0.0);
-    drawSphere(0.1);
+    glTranslated(-0.5f, -0.5f, 0.0f);
+    drawBox(5.0f, 0.5f, 0.5f);
+    glPopMatrix();
+  }
+
+  void drawHead() {
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(1.5f, 0.5f, 0.5f);
+    glPushMatrix();
+    glTranslated(1.5f, -2.0f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(1.0f, 2.5f, 0.5f);
+    glTranslated(1.0f, 1.5f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(0.5f, 1.0f, 0.5f);
+    glTranslated(0.5f, 0.5f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(-0.5f, -1.5f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(0.5f, 1.5f, 0.5f);
+    glTranslated(0.5f, 0.5f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(0.5f, 1.0f, 0.5f);
+    glTranslated(0.5f, 0.0f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(0.5f, 1.0f, 0.5f);
+    glTranslated(0.5f, 0.5f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(2.0f, 0.0f, 0.0f);
+    drawBox(1.5f, 0.5f, 0.5f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(1.0f, -1.0f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(1.5f, 0.0f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.5f, 0.0f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.5f, 0.0f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(1.5f, 0.5f, 0.5f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(0.0f, -1.5f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.5f, -0.5f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(2.0f, 1.0f, 0.5f);
+    glTranslated(2.0f, 0.5f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(2.0f, 0.5f, 0.5f);
+    glTranslated(0.0f, -0.5f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(1.5f, 0.5f, 0.5f);
+    glPopMatrix();
+  }
+
+  void drawBody() {
+    glPushMatrix();
+    glTranslated(0.0f, -1.5f, 0.0f);
+    setDiffuseColorRGB(238, 23, 17);
+    drawBox(0.5f, 1.5f, 0.5f);
+    glTranslated(0.5f, 0.0f, 0.0f);
+    drawBox(1.5f, 0.5f, 0.5f);
+    glTranslated(1.0f, 0.5f, 0.0f);
+    drawBox(0.5f, 1.0f, 0.5f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(-1.0f, 1.0f, 0.5f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(-0.5f, -2.0f, 0.0f);
+    setDiffuseColorRGB(238, 23, 17);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.5f, 0.0f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.5f, 0.0f, 0.0f);
+    setDiffuseColorRGB(238, 23, 17);
+    drawBox(1.0f, 0.5f, 0.5f);
+    glTranslated(1.0f, 0.0f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.5f, 0.0f, 0.0f);
+    setDiffuseColorRGB(238, 23, 17);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(-0.5f, -2.5f, 0.0f);
+    drawBox(3.0f, 0.5f, 0.5f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(-1.0f, -3.5f, 0.0f);
+    drawBox(1.5f, 1.0f, 0.5f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(1.5f, -3.5f, 0.0f);
+    drawBox(1.5f, 1.0f, 0.5f);
+    glPopMatrix();
+  }
+
+  void drawArm() {
+    glPushMatrix();
+    glTranslated(-2.0f, -1.5f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.0f, -1.5f, 0.0f);
+    setDiffuseColorRGB(254, 175, 23);
+    drawBox(1.0f, 1.5f, 0.5f);
+    glTranslated(1.0f, 0.5f, 0.0f);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.0f, 0.5f, 0.0f);
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(0.5f, 0.5f, 0.5f);
+    glTranslated(0.0f, 0.5f, 0.0f);
+    drawBox(1.0f, 1.5f, 0.5f);
+    drawBox(-0.5f, 1.0f, 0.5f);
+    glPopMatrix();
+  }
+
+  void drawFoot() {
+    glPushMatrix();
+    setDiffuseColorRGB(122, 109, 14);
+    drawBox(-1.5f, -0.5f, 0.5f);
+    glTranslated(0.0f, -0.5f, 0.0f);
+    drawBox(-2.0f, -0.5f, 0.5f);
     glPopMatrix();
   }
 
@@ -149,57 +299,83 @@ public:
 
     // 描画開始
     BeginPaint();
+    glPushMatrix();
+    setDiffuseColor(0.5f, 0.3f, 0.0f, 1.0f);
+    glTranslated(-20, -5, -20);
+    drawBox(100, 0.2, 100);
+    glPopMatrix();
+
+    setDiffuseColor(1.0f, 0.3f, 0.0f, 1.0f);
+    for (int x = -3; x <= 3; x++) {
+      for (int z = -3; z <= 3; z++) {
+        glPushMatrix();
+        glTranslated(x * 8, -4, z * 8);
+        glRotated(GetSliderValue(STAR_ANGLE), 0, 0, 1);
+        drawStar(0, 0, 1.0);
+        glPopMatrix();
+      }
+    }
 
     //---------------------------------------------------------------------
     // オブジェクトを描画
     //---------------------------------------------------------------------
-    /* setAmbientColor(0.5f, 0.5f, 0.5f); */
-    /* setSpecularColor(1.0f, 1.0f, 1.0f); */
-    /* setShininess(20.0f); */
 
-    /* glPushMatrix(); */
-    /* setDiffuseColor(0.5f, 0.3f, 0.0f, 1.0f); */
-    /* drawBox(4, 0.3, 4); */
-    /* glTranslated(2, 0, 2); */
+    for (int x = -3; x <= 3; x++) {
+      for (int z = -3; z <= 3; z++) {
+        double z_correction = 0.0;
+        if (x % 2 == 0) {
+          z_correction = 4.0;
+        }
+        glPushMatrix();
+        glTranslated(GetSliderValue(MARIO_X) + x * 8, GetSliderValue(MARIO_Y),
+                     GetSliderValue(MARIO_Z) + z * 8 + z_correction);
+        drawCap();
+        glTranslated(-0.5f, -1.0f, 0.0);
+        drawHead();
+        glTranslated(1.0f, -2.0f, 0.0f);
 
-    /* glRotated(GetSliderValue(ARM1_ANGLE), 1, 0, 0); */
-    /* setDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f); */
-    /* drawBox(0.2, 4, 0.2); */
-    /* glTranslated(0, 4, 0); */
+        glRotated(GetSliderValue(BODY_ANGLE), 0, 0, 1);
 
-    /* glRotated(GetSliderValue(ARM2_ANGLE), 1, 0, 0); */
-    /* setDiffuseColor(1.0f, 1.0f, 0.0f, 1.0f); */
-    /* drawBox(0.2, 2, 0.2); */
-    /* glTranslated(-0.5, 2, 0); */
+        glPushMatrix();
+        glRotated(GetSliderValue(ARM1_ANGLE), 0, 0, 1);
+        drawArm();
+        glPopMatrix();
 
-    /* glPushMatrix(); */
-    /* setDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f); */
-    /* glRotated(GetSliderValue(ARM3_ANGLE), 1, 0, 0); */
-    /* drawBox(1, 1, 0.2); */
+        glTranslated(2.0f, 0.0f, 0.5f);
 
-    /* glPopMatrix(); */
-    /* setDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f); */
-    /* glRotated(GetSliderValue(ARM4_ANGLE), 1, 0, 0); */
-    /* drawBox(1, 1, 0.2); */
+        glPushMatrix();
+        glRotated(180.0f, 0, 1, 0);
+        glRotated(GetSliderValue(ARM2_ANGLE), 0, 0, 1);
+        drawArm();
+        glPopMatrix();
 
-    /* glRotated(-60.0f, 1, 0, 0); */
-    /* glTranslated(0.0, 0.0, -0.5f); */
-    /* glPushMatrix(); */
-    /* glTranslated(0.2f, 0.0, 0.0); */
-    /* drawEye(); */
-    /* glPopMatrix(); */
+        glTranslated(-2.0f, 0.0f, -0.5f);
+        drawBody();
+        glTranslated(1.5f, -3.5f, 0.5f);
 
-    /* glTranslated(0.8f, 0.0, 0.0); */
-    /* drawEye(); */
-    /* glPopMatrix(); */
+        glPushMatrix();
+        glRotated(GetSliderValue(FOOT1_ANGLE), 0, 0, 1);
+        glRotated(180.0f, 0, 1, 0);
+        drawFoot();
+        glPopMatrix();
 
-    glRotated(30.0f, 0.0f, 0.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3d(0, 0, 0);
-    glVertex3d(pos[0], pos[1], pos[2]);
-    glEnd();
-    glTranslated(pos[0], pos[1], pos[2]);
-    drawSphere(0.5);
+        glTranslated(-2.5f, 0.0f, 0.0f);
+
+        glPushMatrix();
+        glRotated(GetSliderValue(FOOT2_ANGLE), 0, 0, 1);
+        glRotated(180.0f, 0, 1, 0);
+        drawFoot();
+        glPopMatrix();
+        glPopMatrix();
+      }
+    }
+
+    /* ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
+     */
+    /* Mat4f CameraTransforms = ps->getModelViewMatrix(); */
+
+    /* glTranslated(0.5, 1, -0.5); */
+    /* ps->drawParticles(frame_count / 30.0); */
 
     //---------------------------------------------------------------------
 
@@ -207,6 +383,4 @@ public:
     EndPaint();
   }
 };
-
-// __MODEL_H__
 #endif

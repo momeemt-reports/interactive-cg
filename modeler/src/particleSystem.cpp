@@ -2,12 +2,11 @@
 
 #include "particleSystem.h"
 
-
-#include <cstdio>
-#include <cstdlib>
 #include <cassert>
 #include <cmath>
-//#include <limits>
+#include <cstdio>
+#include <cstdlib>
+// #include <limits>
 
 using namespace std;
 
@@ -17,113 +16,122 @@ static float prevT;
  * Constructors
  ***************/
 
-ParticleSystem::ParticleSystem() 
-{
-	// TODO
+ParticleSystem::ParticleSystem()
 
+{
+
+  simulate = false;
+
+  Particle_num = 0;
+
+  for (int i = 0; i < MAX_PARTICLE; i++) {
+
+    particle[i] = Particle();
+  }
 }
 
+float getRandom(float fMin, float fMax) {
+  return fMin + (fMax - fMin) * (float)rand() / (float)RAND_MAX;
+}
 
+void ParticleSystem::AddParticleStartingAt(Vec3d WorldPoint)
 
+{
 
+if(simulate == false)
+
+return;
+
+if(Particle_num > MAX_PARTICLE)
+
+Particle_num = 0;
+
+double x = getRandom(-0.5, 0.5);
+
+double z = getRandom(-0.5, 0.5);
+
+particle[Particle_num] = Particle(1.0, WorldPoint, Vec3d(x, 0.0, z), Vec3d(0.0, 0.0, 0.0));
+
+Particle_num++;
+
+return;
+
+}
 
 /*************
  * Destructor
  *************/
 
-ParticleSystem::~ParticleSystem() 
-{
-	// TODO
-
+ParticleSystem::~ParticleSystem() {
+  // TODO
 }
-
 
 /******************
  * Simulation fxns
  ******************/
 
 /** Start the simulation */
-void ParticleSystem::startSimulation(float t)
-{
-    
-	// TODO
+void ParticleSystem::startSimulation(float t) {
 
-	// These values are used by the UI ...
-	// negative bake_end_time indicates that simulation
-	// is still progressing, and allows the
-	// indicator window above the time slider
-	// to correctly show the "baked" region
-	// in grey.
-	bake_end_time = -1;
-	simulate = true;
-	dirty = true;
+  // TODO
 
+  // These values are used by the UI ...
+  // negative bake_end_time indicates that simulation
+  // is still progressing, and allows the
+  // indicator window above the time slider
+  // to correctly show the "baked" region
+  // in grey.
+  bake_end_time = -1;
+  simulate = true;
+  dirty = true;
 }
 
 /** Stop the simulation */
-void ParticleSystem::stopSimulation(float t)
-{
-    
-	// TODO
+void ParticleSystem::stopSimulation(float t) {
 
-	// These values are used by the UI
-	simulate = false;
-	dirty = true;
+  // TODO
 
+  // These values are used by the UI
+  simulate = false;
+  dirty = true;
 }
 
 /** Reset the simulation */
-void ParticleSystem::resetSimulation(float t)
-{
-    
-	// TODO
+void ParticleSystem::resetSimulation(float t) {
 
-	// These values are used by the UI
-	simulate = false;
-	dirty = true;
+  // TODO
 
+  // These values are used by the UI
+  simulate = false;
+  dirty = true;
 }
 
 /** Compute forces and update particles **/
-void ParticleSystem::computeForcesAndUpdateParticles(float t)
-{
+void ParticleSystem::computeForcesAndUpdateParticles(float t) {
 
-	// TODO
+  // TODO
 
-	// Debugging info
-	if( t - prevT > .04 )
-		printf("(!!) Dropped Frame %lf (!!)\n", t-prevT);
-	prevT = t;
+  // Debugging info
+  if (t - prevT > .04)
+    printf("(!!) Dropped Frame %lf (!!)\n", t - prevT);
+  prevT = t;
 }
-
 
 /** Render particles */
-void ParticleSystem::drawParticles(float t)
-{
+void ParticleSystem::drawParticles(float t) {
 
-	// TODO
+  // TODO
 }
 
-
-
-
-
 /** Adds the current configuration of particles to
-  * your data structure for storing baked particles **/
-void ParticleSystem::bakeParticles(float t) 
-{
+ * your data structure for storing baked particles **/
+void ParticleSystem::bakeParticles(float t) {
 
-	// TODO (baking is extra credit)
+  // TODO (baking is extra credit)
 }
 
 /** Clears out your data structure of baked particles */
-void ParticleSystem::clearBaked()
-{
+void ParticleSystem::clearBaked() {
 
-	// TODO (baking is extra credit)
+  // TODO (baking is extra credit)
 }
-
-
-
-
-
