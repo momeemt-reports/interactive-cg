@@ -50,6 +50,29 @@
 
 このモデルは以上7種類によって構成されている。なお、実装としては既存のプリミティブとしてcylinder、sphere、triangleの3種類が加えて含まれている。
 
+工夫した点としては、OpenGLの図形描画関数を利用して作成した星型のプリミティブが挙げられる。
+以下のように実装した。
+
+```cpp
+void drawStar(float centerX, float centerY, float radius) {
+  const int numVertices = 10;
+  const float angleStep = M_PI / 5;
+  glBegin(GL_TRIANGLE_FAN);
+  glVertex2f(centerX, centerY);
+  for (int i = 0; i <= numVertices; ++i) {
+    float angle = i * angleStep;
+    float r = (i % 2 == 0) ? radius : radius / 2;
+    float x = centerX + r * cos(angle);
+    float y = centerY + r * sin(angle);
+    glVertex2f(x, y);
+  }
+  glEnd();
+}
+```
+
+`drawStar`関数は、中心座標と半径を受け取り、中心座標を中心に半径を持つ星型を描画する関数である。
+具体的には、中心座標を中心に半径を持つ円周上の点を交互に結んでいくことで星型を描画している。
+
 === 3階層以上の階層構造
 作成したモデルは、以下の3階層以上の階層構造を持っている。
 
