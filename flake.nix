@@ -22,6 +22,7 @@
           if pkgs.stdenv.isDarwin
           then "${pkgs.darwin.Libsystem}/include"
           else "${pkgs.glibc.dev}/include";
+        toSingleLine = str: builtins.replaceStrings ["\n"] [" "] str;
       in {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs;
@@ -43,6 +44,7 @@
               xorg.libXt
               libpng
               libjpeg
+              gcc
             ]
             ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs.darwin.apple_sdk.frameworks; [
               ApplicationServices
@@ -54,9 +56,50 @@
               GLUT
               UniformTypeIdentifiers
             ]);
-          FLTK_INCLUDES_DIR = "${pkgs.fltk}/include";
-          NIX_CFLAGS_COMPILE = "-F${pkgs.darwin.apple_sdk.frameworks.CoreFoundation}/Library/Frameworks -F${pkgs.darwin.apple_sdk.frameworks.CoreGraphics}/Library/Frameworks -I${pkgs.lib.getDev pkgs.clangStdenv.cc.libc}/include -I${pkgs.llvmPackages.clang-unwrapped.lib}/lib/clang/16/include -I${libcIncludeDir} -I${pkgs.llvmPackages.libcxx.dev}/include/c++/v1 -I${pkgs.llvmPackages.libcxxabi.dev}/include/c++/v1 -I${pkgs.libpng.dev}/include -I${pkgs.xorg.libX11.dev}/include -I${pkgs.libjpeg.dev}/include";
-          NIX_LDFLAGS = "-F${pkgs.darwin.apple_sdk.frameworks.CoreFoundation}/Library/Frameworks -F${pkgs.darwin.apple_sdk.frameworks.CoreGraphics}/Library/Frameworks -framework CoreFoundation -framework CoreGraphics -framework ApplicationServices -framework Carbon -framework Cocoa -framework OpenGL -framework GLUT -framework UniformTypeIdentifiers -L${pkgs.libpng}/lib -lpng -L${pkgs.xorg.libX11}/lib -lX11 -L${pkgs.libjpeg}/lib -ljpeg";
+
+          NIX_CFLAGS_COMPILE = with pkgs;
+            toSingleLine ''
+              -I${llvmPackages.clang-unwrapped.lib}/lib/clang/16/include
+              -I${llvmPackages.libcxx.dev}/include/c++/v1
+              -I${llvmPackages.libcxxabi.dev}/include/c++/v1
+              -I${libpng.dev}/include
+              -I${fltk}/include
+              -I${libcIncludeDir}
+            '';
+
+          NIX_LDFLAGS = with pkgs;
+            toSingleLine ''
+              -F${darwin.apple_sdk.frameworks.ApplicationServices}/Library/Frameworks
+              -F${darwin.apple_sdk.frameworks.CoreFoundation}/Library/Frameworks
+              -F${darwin.apple_sdk.frameworks.CoreGraphics}/Library/Frameworks
+              -F${darwin.apple_sdk.frameworks.Carbon}/Library/Frameworks
+              -F${darwin.apple_sdk.frameworks.Cocoa}/Library/Frameworks
+              -F${darwin.apple_sdk.frameworks.OpenGL}/Library/Frameworks
+              -F${darwin.apple_sdk.frameworks.GLUT}/Library/Frameworks
+              -F${darwin.apple_sdk.frameworks.UniformTypeIdentifiers}/Library/Frameworks
+              -framework CoreFoundation
+              -framework CoreGraphics
+              -framework ApplicationServices
+              -framework Carbon
+              -framework Cocoa
+              -framework OpenGL
+              -framework GLUT
+              -framework UniformTypeIdentifiers
+              -L${libpng}/lib
+              -lpng
+              -L${fltk}/lib
+              -lfltk
+              -lfltk_images
+              -L${xorg.libX11}/lib
+              -lX11
+              -lXext
+              -ljpeg
+              -lfltk_gl
+              -lfltk_forms
+              -lm
+              -lc++
+              -lc++abi
+            '';
         };
       }
     );
