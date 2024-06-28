@@ -16,6 +16,7 @@
 #ifndef __PARTICLE_SYSTEM_H__
 #define __PARTICLE_SYSTEM_H__
 
+#include "mat.h"
 #pragma warning(disable : 4018)
 #pragma warning(disable : 4267)
 #pragma warning(disable : 4311)
@@ -49,8 +50,11 @@ public:
   ParticleSystem();
 
   Particle particle[MAX_PARTICLE]; // パーティクルを格納する配列
-  
+
   virtual void AddParticleStartingAt(Vec3d WorldPoint);
+
+  Mat4f getModelViewMatrix();
+  void SpawnParticles(Mat4f cameraTransform);
 
   int Particle_num;
 

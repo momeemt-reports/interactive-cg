@@ -12,4 +12,5 @@ external/
 # report
 *.pdf
 impressionist-submit
+modeler_submit
 *.zip

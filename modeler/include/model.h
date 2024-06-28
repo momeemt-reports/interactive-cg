@@ -12,7 +12,10 @@
 #include "animator.h"
 #include "camera.h"
 #include "controller.h"
+#include "modelerapp.h"
 #include "modelerdraw.h"
+#include "particleSystem.h"
+#include <FL/glu.h>
 
 // フレーム番号の最大値
 int max_frame_count = 450;
@@ -24,7 +27,6 @@ private:
   // 第3週課題
   //---------------------------------------------------------------------
 
-  // フレーム番号
   int frame_count;
 
   //-------------------------------------------------------------------------
@@ -32,6 +34,7 @@ private:
   //-------------------------------------------------------------------------
 
   // 〜〜〜変数を追加〜〜〜
+  double dolly;
 
   // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
 
@@ -51,7 +54,7 @@ public:
     //---------------------------------------------------------------------
 
     // 〜〜〜変数を初期化〜〜〜
-    SetSliderValue(DOLLY, -180);
+    dolly = 0.0;
 
     // 〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜〜
   }
@@ -61,29 +64,31 @@ public:
   //---------------------------------------------------------------------
 
   void SetAutomaticAnimation() {
-    double t = frame_count / 30.0;
-    double run_distance = t * 0.8;
-
     const double PI = 3.14159;
 
-    double arm_angle = 45.0 * sin(t * 4.0 * PI);
-    double foot_angle = 30.0 * sin(t * 4.0 * PI);
-    double body_angle = 10.0 * sin(t * 4.0 * PI);
-    double star_angle = 360.0 * sin(t * 0.2 * PI);
-
-    SetSliderValue(MARIO_X, run_distance);
-    SetSliderValue(ARM1_ANGLE, arm_angle);
-    SetSliderValue(ARM2_ANGLE, -arm_angle);
-    SetSliderValue(FOOT1_ANGLE, foot_angle);
-    SetSliderValue(FOOT2_ANGLE, -foot_angle);
-    SetSliderValue(BODY_ANGLE, body_angle);
-    SetSliderValue(STAR_ANGLE, star_angle);
-
     if (frame_count >= 150) {
+      double local_frame_count = frame_count - 150;
+      double t = local_frame_count / 30.0;
+      double run_distance = t * 0.8;
+
       double jump_height = 1.0 * sin((t - 5.0) * 3.14159);
-      SetSliderValue(MARIO_Y, 2.5 + jump_height);
+      SetSliderValue(MARIO_Y, 3.0 + jump_height);
+
+      double arm_angle = 45.0 * sin(t * 4.0 * PI);
+      double foot_angle = 30.0 * sin(t * 4.0 * PI);
+      double body_angle = 10.0 * sin(t * 4.0 * PI);
+      double star_angle = 360.0 * sin(t * 0.2 * PI);
+
+      SetSliderValue(MARIO_X, run_distance);
+      SetSliderValue(ARM1_ANGLE, arm_angle);
+      SetSliderValue(ARM2_ANGLE, -arm_angle);
+      SetSliderValue(FOOT1_ANGLE, foot_angle);
+      SetSliderValue(FOOT2_ANGLE, -foot_angle);
+      SetSliderValue(BODY_ANGLE, body_angle);
+      SetSliderValue(STAR_ANGLE, star_angle);
     } else {
-      SetSliderValue(MARIO_Y, 2.5);
+      SetSliderValue(MARIO_Y, 3.0);
+      dolly = 150 - frame_count;
     }
   }
 
@@ -296,9 +301,16 @@ public:
 
     // スーパークラスの描画メソッドをコール（必須）
     ModelerView::draw();
+    ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
+    Mat4f CameraTransforms = ps->getModelViewMatrix();
 
     // 描画開始
     BeginPaint();
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0.0, 15.0 + dolly, 15.0 + dolly, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
     glPushMatrix();
     setDiffuseColor(0.5f, 0.3f, 0.0f, 1.0f);
     glTranslated(-20, -5, -20);
@@ -316,9 +328,11 @@ public:
       }
     }
 
-    //---------------------------------------------------------------------
-    // オブジェクトを描画
-    //---------------------------------------------------------------------
+    /* //---------------------------------------------------------------------
+     */
+    /* // オブジェクトを描画 */
+    /* //---------------------------------------------------------------------
+     */
 
     for (int x = -3; x <= 3; x++) {
       for (int z = -3; z <= 3; z++) {
@@ -370,12 +384,7 @@ public:
       }
     }
 
-    /* ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
-     */
-    /* Mat4f CameraTransforms = ps->getModelViewMatrix(); */
-
-    /* glTranslated(0.5, 1, -0.5); */
-    /* ps->drawParticles(frame_count / 30.0); */
+    // ps->SpawnParticles(CameraTransforms);
 
     //---------------------------------------------------------------------
 

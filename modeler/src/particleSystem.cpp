@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstdlib>
 // #include <limits>
+#include <iostream>
 
 using namespace std;
 
@@ -16,16 +17,10 @@ static float prevT;
  * Constructors
  ***************/
 
-ParticleSystem::ParticleSystem()
-
-{
-
+ParticleSystem::ParticleSystem() {
   simulate = false;
-
   Particle_num = 0;
-
   for (int i = 0; i < MAX_PARTICLE; i++) {
-
     particle[i] = Particle();
   }
 }
@@ -34,28 +29,20 @@ float getRandom(float fMin, float fMax) {
   return fMin + (fMax - fMin) * (float)rand() / (float)RAND_MAX;
 }
 
-void ParticleSystem::AddParticleStartingAt(Vec3d WorldPoint)
+void ParticleSystem::AddParticleStartingAt(Vec3d WorldPoint) {
+      //  if(simulate == false)
+      //       return;
 
-{
+       if(Particle_num > MAX_PARTICLE)
+            Particle_num = 0;
 
-if(simulate == false)
+       double x = getRandom(-0.5, 0.5);
+       double z = getRandom(-0.5, 0.5);
 
-return;
+       particle[Particle_num] = Particle(1.0, WorldPoint, Vec3d(x, 0.0, z), Vec3d(0.0, 0.0, 0.0));
+       Particle_num++;
 
-if(Particle_num > MAX_PARTICLE)
-
-Particle_num = 0;
-
-double x = getRandom(-0.5, 0.5);
-
-double z = getRandom(-0.5, 0.5);
-
-particle[Particle_num] = Particle(1.0, WorldPoint, Vec3d(x, 0.0, z), Vec3d(0.0, 0.0, 0.0));
-
-Particle_num++;
-
-return;
-
+       return;
 }
 
 /*************
@@ -98,7 +85,6 @@ void ParticleSystem::stopSimulation(float t) {
 
 /** Reset the simulation */
 void ParticleSystem::resetSimulation(float t) {
-
   // TODO
 
   // These values are used by the UI
@@ -108,8 +94,15 @@ void ParticleSystem::resetSimulation(float t) {
 
 /** Compute forces and update particles **/
 void ParticleSystem::computeForcesAndUpdateParticles(float t) {
+  // if (simulate == false) {
+  //   return;
+  // }
 
-  // TODO
+  for (int i = 0; i < MAX_PARTICLE; i++) {
+    particle[i].f = particle[i].m * G - drag * particle[i].v;
+    particle[i].v += (t - prevT) * (particle[i].f / particle[i].m);
+    particle[i].x += (t - prevT) * particle[i].v;
+  }
 
   // Debugging info
   if (t - prevT > .04)
@@ -119,8 +112,20 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t) {
 
 /** Render particles */
 void ParticleSystem::drawParticles(float t) {
+  // if (simulate == false) {
+  //   return;
+  // }
 
-  // TODO
+  for (int i = 0; i < MAX_PARTICLE; i++) {
+    std::cout << (double)particle[i].m << std::endl;
+    if (particle[i].m > 0.0) {
+      glPointSize(3.0); // パーティクルの大きさ
+      glBegin(GL_POINTS);
+      std::cout << "x[0] = " << (double)particle[i].x[0] << std::endl;
+      glVertex3f(particle[i].x[0], particle[i].x[1], particle[i].x[2]);
+      glEnd();
+    }
+  }
 }
 
 /** Adds the current configuration of particles to
@@ -134,4 +139,25 @@ void ParticleSystem::bakeParticles(float t) {
 void ParticleSystem::clearBaked() {
 
   // TODO (baking is extra credit)
+}
+
+Mat4f ParticleSystem::getModelViewMatrix() {
+  GLfloat m[16];
+  glGetFloatv(GL_MODELVIEW_MATRIX, m);
+  Mat4f matMV(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10],
+              m[11], m[12], m[13], m[14], m[15]);
+  return matMV.transpose();
+}
+
+void ParticleSystem::SpawnParticles( Mat4f CameraTransforms ) {
+      Mat4f matCam = getModelViewMatrix();
+      Mat4f ModelTransforms = CameraTransforms.inverse() * matCam;
+
+      Vec4f WorldPoint1 = ModelTransforms * Vec4f(0, 0, 0, 1);
+      Vec3d WorldPoint(WorldPoint1[0], WorldPoint1[1], WorldPoint1[2]);
+
+      for(int i = 0; i < Spawn_Num; i++)
+           AddParticleStartingAt( WorldPoint );
+
+      return;
 }

@@ -7,6 +7,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
 #include <FL/gl.h>
+#include <iostream>
 #ifdef __APPLE__
 #include <OpenGL/glu.h>
 #else

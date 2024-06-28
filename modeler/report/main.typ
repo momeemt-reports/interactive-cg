@@ -128,38 +128,58 @@ void SetController(ModelerControl *controls) {
 }
 ```
 
-上記のコードによって、マリオの座標、マリオの体の角度、マリオの手や足の角度、床の星の模様の角度がスライダに対応づけられている。
+スライダーの制御内容について説明する。
+
+- `FRAME_CONTROLS`
+  - フレーム番号を制御するスライダ
+- `MARIO_X`
+  - マリオのX座標を制御するスライダ
+- `MARIO_Y`
+  - マリオのY座標を制御するスライダ
+- `MARIO_Z`
+  - マリオのZ座標を制御するスライダ
+- `BODY_ANGLE`
+  - マリオの体の角度を制御するスライダ
+- `ARM1_ANGLE`
+  - マリオの右腕の角度を制御するスライダ
+- `ARM2_ANGLE`
+  - マリオの左腕の角度を制御するスライダ
+- `FOOT1_ANGLE`
+  - マリオの右足の角度を制御するスライダ
+- `FOOT2_ANGLE`
+  - マリオの左足の角度を制御するスライダ
+- `STAR_ANGLE`
+  - 床の星の模様の角度を制御するスライダ
 
 ```cpp
 void SetAutomaticAnimation() {
-  double t = frame_count / 30.0;
-  double run_distance = t * 0.8;
-
   const double PI = 3.14159;
 
-  double arm_angle = 45.0 * sin(t * 4.0 * PI);
-  double foot_angle = 30.0 * sin(t * 4.0 * PI);
-  double body_angle = 10.0 * sin(t * 4.0 * PI);
-
-  double star_angle = 360.0 * sin(t * 0.2 * PI);
-
-  SetSliderValue(MARIO_X, run_distance);
-  SetSliderValue(ARM1_ANGLE, arm_angle);
-  SetSliderValue(ARM2_ANGLE, -arm_angle);
-  SetSliderValue(FOOT1_ANGLE, foot_angle);
-  SetSliderValue(FOOT2_ANGLE, -foot_angle);
-  SetSliderValue(BODY_ANGLE, body_angle);
-  SetSliderValue(STAR_ANGLE, star_angle);
-
   if (frame_count >= 150) {
+    double local_frame_count = frame_count - 150;
+    double t = local_frame_count / 30.0;
+    double run_distance = t * 0.8;
+
     double jump_height = 1.0 * sin((t - 5.0) * 3.14159);
-    SetSliderValue(MARIO_Y, 2.5 + jump_height);
+    SetSliderValue(MARIO_Y, 3.0 + jump_height);
+
+    double arm_angle = 45.0 * sin(t * 4.0 * PI);
+    double foot_angle = 30.0 * sin(t * 4.0 * PI);
+    double body_angle = 10.0 * sin(t * 4.0 * PI);
+    double star_angle = 360.0 * sin(t * 0.2 * PI);
+
+    SetSliderValue(MARIO_X, run_distance);
+    SetSliderValue(ARM1_ANGLE, arm_angle);
+    SetSliderValue(ARM2_ANGLE, -arm_angle);
+    SetSliderValue(FOOT1_ANGLE, foot_angle);
+    SetSliderValue(FOOT2_ANGLE, -foot_angle);
+    SetSliderValue(BODY_ANGLE, body_angle);
+    SetSliderValue(STAR_ANGLE, star_angle);
   } else {
-    SetSliderValue(MARIO_Y, 2.5);
+    SetSliderValue(MARIO_Y, 3.0);
+    dolly = 150 - frame_count;
   }
 }
-
-void SetManualAnimation() { SetAutomaticAnimation(); }
 ```
 
 また、上記のコードによってアニメーションを実装している。
@@ -167,3 +187,53 @@ void SetManualAnimation() { SetAutomaticAnimation(); }
 マリオの腕は45度、足は30度、体は10度、星の模様は360度の振幅で変化するようにした。
 マリオのY座標は1.0の振幅で3秒ごとに変化するように設定することで、ジャンプモーションを表現している。
 手動アニメーションでも同等のコードを呼び出すことで変更できるようにしている。
+
+=== 工夫した点
+最低要件を満たすだけでなく、いくつかの工夫を行った。
+
+==== ドリーの実装
+マリオが走るアニメーションを再生する前に、カメラがマリオに向かってドリーするように実装した。
+具体的には、`SetAutomaticAnimation`関数内で`dolly`変数を用いてカメラの位置を変更している。
+
+150フレームまでは、`dolly = 150 - frame_count`としてカメラの位置を遠くから近くに移動させるための値を設定している。
+
+```cpp
+void SetAutomaticAnimation() {
+  const double PI = 3.14159;
+
+  if (frame_count >= 150) {
+    // 中略
+  } else {
+    SetSliderValue(MARIO_Y, 3.0);
+    dolly = 150 - frame_count;
+  }
+}
+```
+
+その後、y軸とz軸において`dolly`変数の値を加算することで、カメラの位置を遠くから近くに移動させている。
+
+```cpp
+glMatrixMode(GL_MODELVIEW);
+glLoadIdentity();
+gluLookAt(0.0, 15.0 + dolly, 15.0 + dolly, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+```
+
+==== 複数体のマリオを描画
+複数体のマリオが床に並んでいるような構図を描画するために、マリオの描画をループで複数回行うようにした。
+また、`z_correction`変数を用いて、マリオの位置が偶数の場合に半分だけz軸方向にずらすことで、複雑な構図になるようにした。
+
+```cpp
+for (int x = -3; x <= 3; x++) {
+  for (int z = -3; z <= 3; z++) {
+    double z_correction = 0.0;
+    if (x % 2 == 0) {
+      z_correction = 4.0;
+    }
+    glPushMatrix();
+    glTranslated(GetSliderValue(MARIO_X) + x * 8, GetSliderValue(MARIO_Y),
+                  GetSliderValue(MARIO_Z) + z * 8 + z_correction);
+    drawCap();
+    // ... （省略）
+  }
+}
+```

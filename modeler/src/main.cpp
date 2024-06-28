@@ -19,9 +19,8 @@ int main() {
   // Set model controllers
   SetController(controls);
 
-  /* ParticleSystem *ps = new ParticleSystem(); */
-
-  /* ModelerApplication::Instance()->SetParticleSystem(ps); */
+  ParticleSystem *ps = new ParticleSystem();
+  ModelerApplication::Instance()->SetParticleSystem(ps);
 
   // Initialize the modeler application with your model and the
   // appropriate array of controls.
