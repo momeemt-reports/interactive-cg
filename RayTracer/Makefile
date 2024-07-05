@@ -1,15 +1,24 @@
-WORKDIR = `pwd`
+WORKDIR = /Users/momeemt/develop/interactive-cg/RayTracer
 
-CFLAGS += $(NIX_CFLAGS_COMPILE) -std=c++11 -stdlib=libc++
-LDFLAGS += $(NIX_LDFLAGS)
+CC = gcc
+CXX = g++
+AR = ar
+LD = g++
+WINDRES = windres
 
-INC = -I/usr/include
-LIBDIR = 
-LIB = -lc++
+FLTK_DIR = $(WORKDIR)/fltk-1.3.9/
+
+INC = -I$(FLTK_DIR) -I/usr/include -I/opt/X11/include
+CFLAGS = `$(FLTK_DIR)/fltk-config --cxxflags` 
+RESINC = 
+LIBDIR = -L$(FLTK_DIR)/lib -L/opt/X11/lib -L/opt/homebrew/lib -L/opt/homebrew/Cellar/jpeg/9f/lib
+LIB = $(FLTK_DIR)/lib/libfltk_images.a $(FLTK_DIR)/lib/libfltk_gl.a $(FLTK_DIR)/lib/libfltk_forms.a $(FLTK_DIR)/lib/libfltk.a $(FLTK_DIR)/lib/libfltk_z.a $(FLTK_DIR)/lib/libfltk_jpeg.a $(FLTK_DIR)/lib/libfltk_png.a -lX11 -lXext -framework OpenGL -ljpeg -lpng 
+LDFLAGS = `$(FLTK_DIR)/fltk-config --ldstaticflags`
 
 INC_DEBUG = $(INC)
-CFLAGS_DEBUG = $(CFLAGS) -g 
-RESINC_DEBUG = 
+CFLAGS_DEBUG = $(CFLAGS) -g
+RESINC_DEBUG = $(RESINC)
+RCFLAGS_DEBUG = $(RCFLAGS)
 LIBDIR_DEBUG = $(LIBDIR)
 LIB_DEBUG = $(LIB)
 LDFLAGS_DEBUG = $(LDFLAGS)
@@ -19,7 +28,8 @@ OUT_DEBUG = bin/Debug/RayTracer
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O2 -s
-RESINC_RELEASE = 
+RESINC_RELEASE = $(RESINC)
+RCFLAGS_RELEASE = $(RCFLAGS)
 LIBDIR_RELEASE = $(LIBDIR)
 LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS)

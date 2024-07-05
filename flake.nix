@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/23.11";
+    nixpkgs.url = "github:nixos/nixpkgs/24.05";
     flake-utils.url = "github:numtide/flake-utils";
     flake-compat = {
       url = "github:edolstra/flake-compat";
@@ -16,7 +16,6 @@
       system: let
         pkgs = import nixpkgs {
           inherit system;
-          config.allowBroken = true;
         };
         libcIncludeDir =
           if pkgs.stdenv.isDarwin
@@ -44,7 +43,7 @@
               xorg.libXt
               libpng
               libjpeg
-              gcc
+              fltk
             ]
             ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs.darwin.apple_sdk.frameworks; [
               ApplicationServices
@@ -61,7 +60,8 @@
             toSingleLine ''
               -I${llvmPackages.clang-unwrapped.lib}/lib/clang/16/include
               -I${llvmPackages.libcxx.dev}/include/c++/v1
-              -I${llvmPackages.libcxxabi.dev}/include/c++/v1
+              -I${llvmPackages.libcxxClang}/resource-root/include
+              -I${llvmPackages.libcxxStdenv}
               -I${libpng.dev}/include
               -I${fltk}/include
               -I${libcIncludeDir}
